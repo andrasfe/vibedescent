@@ -102,7 +102,7 @@ Loss = w_gap * (gap_pct / 100)
 
 ## Example: Falling Squares
 
-The Falling Squares example demonstrates a diverse strategy pool and an objective that balances runtime, memory, and correctness.
+The [Falling Squares](https://leetcode.com/problems/falling-squares/) example demonstrates a diverse strategy pool and an objective that balances runtime, memory, and correctness.
 
 ### Available Strategies
 
