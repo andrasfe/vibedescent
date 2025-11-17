@@ -20,9 +20,13 @@ class FallingSquaresProposer(AdaptiveProposer[FallingSquaresSolution]):
             {"type": "set_strategy", "strategy": "interval_map"},
             {"type": "set_strategy", "strategy": "diff_array"},
             {"type": "set_strategy", "strategy": "bucket_grid"},
+            {"type": "set_strategy", "strategy": "bucket_grid_large"},
             {"type": "set_strategy", "strategy": "bitset"},
+            {"type": "set_strategy", "strategy": "bitset_small_span"},
+            {"type": "set_strategy", "strategy": "bitset_large_span"},
             {"type": "set_strategy", "strategy": "fenwick"},
             {"type": "set_strategy", "strategy": "block_dp"},
+            {"type": "set_strategy", "strategy": "block_dp_fine"},
             {"type": "set_strategy", "strategy": "sparse_tree"},
             {"type": "toggle_lazy"},
             {"type": "reset_params"},
@@ -30,6 +34,14 @@ class FallingSquaresProposer(AdaptiveProposer[FallingSquaresSolution]):
             {"type": "adjust_param", "param": "bucket_size", "delta": -32, "min": 16, "max": 512, "strategy": "bucket_grid", "default": 64},
             {"type": "adjust_param", "param": "block_size", "delta": 16, "min": 16, "max": 256, "strategy": "block_dp", "default": 64},
             {"type": "adjust_param", "param": "block_size", "delta": -16, "min": 16, "max": 256, "strategy": "block_dp", "default": 64},
+            {"type": "adjust_param", "param": "block_size", "delta": 8, "min": 16, "max": 128, "strategy": "block_dp_fine", "default": 32},
+            {"type": "adjust_param", "param": "block_size", "delta": -8, "min": 16, "max": 128, "strategy": "block_dp_fine", "default": 32},
+            {"type": "adjust_param", "param": "span_limit", "delta": 500, "min": 2000, "max": 20000, "strategy": "bitset", "default": 6000},
+            {"type": "adjust_param", "param": "span_limit", "delta": -500, "min": 2000, "max": 20000, "strategy": "bitset", "default": 6000},
+            {"type": "adjust_param", "param": "span_limit", "delta": 400, "min": 1500, "max": 8000, "strategy": "bitset_small_span", "default": 4000},
+            {"type": "adjust_param", "param": "span_limit", "delta": -400, "min": 1500, "max": 8000, "strategy": "bitset_small_span", "default": 4000},
+            {"type": "adjust_param", "param": "span_limit", "delta": 800, "min": 6000, "max": 25000, "strategy": "bitset_large_span", "default": 12000},
+            {"type": "adjust_param", "param": "span_limit", "delta": -800, "min": 6000, "max": 25000, "strategy": "bitset_large_span", "default": 12000},
         ]
         super().__init__(operator_pool=operator_pool, use_momentum=True, exploration_rate=0.45)
 

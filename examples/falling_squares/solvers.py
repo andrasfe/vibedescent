@@ -267,8 +267,19 @@ def falling_squares_bucket_grid(
     return ans
 
 
+def falling_squares_bucket_grid_large(
+    positions: Positions,
+    params: Optional[Dict[str, Any]] = None,
+    return_stats: bool = False,
+) -> List[int] | Tuple[List[int], Dict[str, float]]:
+    local_params = dict(params or {})
+    local_params.setdefault("bucket_size", 128)
+    return falling_squares_bucket_grid(positions, params=local_params, return_stats=return_stats)
+
+
 def falling_squares_bitset(
     positions: Positions,
+    params: Optional[Dict[str, Any]] = None,
     return_stats: bool = False,
 ) -> List[int] | Tuple[List[int], Dict[str, float]]:
     """
@@ -277,6 +288,9 @@ def falling_squares_bitset(
     Uses a dense array of heights, so only suitable when coordinates span
     a relatively small domain. Provides a contrasting memory/runtime profile.
     """
+    params = params or {}
+    span_limit = params.get("span_limit", 6000)
+
     if not positions:
         stats = _stats_dict(memory_bytes=0, allocations=0)
         return ([], stats) if return_stats else []
@@ -285,9 +299,9 @@ def falling_squares_bitset(
     max_coord = max(p[0] + p[1] for p in positions)
     span = max_coord - min_coord + 1
 
-    # Guard against huge allocations; fall back to interval map
-    if span > 5000:
-        return falling_squares_interval_map(positions, return_stats=return_stats)
+    # Guard against huge allocations; fall back to diff array
+    if span > span_limit:
+        return falling_squares_diff_array(positions, return_stats=return_stats)
 
     heights = [0] * span
     ans: List[int] = []
@@ -308,6 +322,26 @@ def falling_squares_bitset(
     if return_stats:
         return ans, stats
     return ans
+
+
+def falling_squares_bitset_small_span(
+    positions: Positions,
+    params: Optional[Dict[str, Any]] = None,
+    return_stats: bool = False,
+) -> List[int] | Tuple[List[int], Dict[str, float]]:
+    local_params = dict(params or {})
+    local_params.setdefault("span_limit", 4000)
+    return falling_squares_bitset(positions, params=local_params, return_stats=return_stats)
+
+
+def falling_squares_bitset_large_span(
+    positions: Positions,
+    params: Optional[Dict[str, Any]] = None,
+    return_stats: bool = False,
+) -> List[int] | Tuple[List[int], Dict[str, float]]:
+    local_params = dict(params or {})
+    local_params.setdefault("span_limit", 12000)
+    return falling_squares_bitset(positions, params=local_params, return_stats=return_stats)
 
 
 def falling_squares_fenwick(
@@ -412,6 +446,16 @@ def falling_squares_block_dp(
     return ans
 
 
+def falling_squares_block_dp_fine(
+    positions: Positions,
+    params: Optional[Dict[str, Any]] = None,
+    return_stats: bool = False,
+) -> List[int] | Tuple[List[int], Dict[str, float]]:
+    local_params = dict(params or {})
+    local_params.setdefault("block_size", 32)
+    return falling_squares_block_dp(positions, params=local_params, return_stats=return_stats)
+
+
 def falling_squares_sparse_tree(
     positions: Positions,
     return_stats: bool = False,
@@ -505,10 +549,40 @@ _register_strategy("segment_tree_lazy", falling_squares_segment_tree, supports_p
 _register_strategy("interval_map", falling_squares_interval_map, description="Non-overlapping interval maintenance")
 _register_strategy("diff_array", falling_squares_diff_array, description="Difference-array on compressed coordinates")
 _register_strategy("bucket_grid", falling_squares_bucket_grid, supports_params=True, description="Bucketed overlap checks")
-_register_strategy("bitset", falling_squares_bitset, description="Dense bitset heights for small spans")
+_register_strategy(
+    "bitset",
+    falling_squares_bitset,
+    supports_params=True,
+    description="Dense bitset heights for small spans",
+    metadata={"params": ["span_limit"]},
+)
+_register_strategy(
+    "bitset_small_span",
+    falling_squares_bitset_small_span,
+    supports_params=True,
+    description="Bitset tuned for smaller spans",
+)
+_register_strategy(
+    "bitset_large_span",
+    falling_squares_bitset_large_span,
+    supports_params=True,
+    description="Bitset tuned for larger spans",
+)
 _register_strategy("fenwick", falling_squares_fenwick, description="Fenwick tree (BIT) maximum heights")
 _register_strategy("block_dp", falling_squares_block_dp, supports_params=True, description="Blocked coordinate DP array")
+_register_strategy(
+    "block_dp_fine",
+    falling_squares_block_dp_fine,
+    supports_params=True,
+    description="Blocked coordinate DP array with finer blocks",
+)
 _register_strategy("sparse_tree", falling_squares_sparse_tree, description="Sparse tree storing visited leaves")
+_register_strategy(
+    "bucket_grid_large",
+    falling_squares_bucket_grid_large,
+    supports_params=True,
+    description="Bucket grid with larger bucket size",
+)
 
 
 def run_solver(

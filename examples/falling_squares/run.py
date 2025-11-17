@@ -26,9 +26,9 @@ def build_config(target_gap: float, max_iters: int, patience: int) -> ObjectiveC
     return ObjectiveConfig(
         hard_constraints=["correctness"],
         weights={
-            "gap": 0.15,
-            "runtime": 0.45,
-            "memory": 0.25,
+            "gap": 0.05,
+            "runtime": 0.60,
+            "memory": 0.20,
             "allocations": 0.10,
             "violation": 0.05,
         },
@@ -43,19 +43,19 @@ def build_config(target_gap: float, max_iters: int, patience: int) -> ObjectiveC
             "target_gap_pct": target_gap,
             "patience": patience,
             "max_iters": max_iters,
-            "min_iters": 4,
+            "min_iters": 6,
         },
     )
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Optimize Falling Squares solver using Vibe Descent")
-    parser.add_argument("--random-cases", type=int, default=5, help="Number of random cases to add")
-    parser.add_argument("--case-length", type=int, default=60, help="Length of each random case")
-    parser.add_argument("--iters", type=int, default=15, help="Maximum iterations")
-    parser.add_argument("--k", type=int, default=4, help="Candidates per iteration")
-    parser.add_argument("--target-gap", type=float, default=0.5, help="Target runtime gap (%%)")
-    parser.add_argument("--patience", type=int, default=4, help="Patience before stopping")
+    parser.add_argument("--random-cases", type=int, default=10, help="Number of random cases to add")
+    parser.add_argument("--case-length", type=int, default=200, help="Length of each random case")
+    parser.add_argument("--iters", type=int, default=18, help="Maximum iterations")
+    parser.add_argument("--k", type=int, default=8, help="Candidates per iteration")
+    parser.add_argument("--target-gap", type=float, default=0.05, help="Target runtime gap (%%)")
+    parser.add_argument("--patience", type=int, default=5, help="Patience before stopping")
     parser.add_argument("--seed", type=int, default=42, help="Random seed")
     parser.add_argument("--log-dir", type=str, default="logs/falling_squares", help="Directory to store logs")
     parser.add_argument("--quiet", action="store_true", help="Suppress verbose output")
@@ -72,7 +72,7 @@ def main() -> int:
     evaluator = FallingSquaresEvaluator(weights=config.weights)
     proposer = FallingSquaresProposer()
     critic = SimpleCritic()
-    initial_solution = FallingSquaresSolution(strategy="segment_tree_lazy")
+    initial_solution = FallingSquaresSolution(strategy="bitset", params={"span_limit": 6000})
 
     logger = Logger(log_dir=args.log_dir, verbose=not args.quiet)
 

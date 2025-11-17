@@ -144,6 +144,22 @@ rm -rf examples/falling_squares/logs
 python examples/falling_squares/run.py ... (same command as above)
 ```
 
+### Example: VRPTW (Vehicle Routing with Time Windows)
+
+The VRPTW example (`examples/vrptw/`) showcases how Vibe Descent can orchestrate multiple routing heuristics:
+
+- **Strategies**: nearest-time-window greedy, Clark-Wright savings, randomized insertion, two-phase hybrid.
+- **Evaluation**: enforces serving every customer within capacity/time windows, and measures total distance plus lateness penalties.
+- **Loss**: balances route distance (runtime proxy) with lateness/missing-customer penalties (violations).
+
+Run it with:
+
+```bash
+python examples/vrptw/run.py --customers 30 --capacity 40 --iters 14 --k 6
+```
+
+The log directory `examples/vrptw/logs/vrptw/` stores per-iteration measurements so you can inspect which heuristic configuration won.
+
 ## Configuration (Objective File)
 
 ## Extending the Framework
