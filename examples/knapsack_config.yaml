@@ -1,0 +1,51 @@
+# Vibe Descent Configuration for Knapsack Problem
+#
+# This configuration defines the objective function and optimization parameters
+# for the 0/1 Knapsack problem.
+
+# Hard constraints that must be satisfied (violations = immediate rejection)
+hard_constraints:
+  - feasible           # Solution must fit within capacity
+  - no_violations      # No constraint violations
+
+# Loss function weights (must sum to ≤ 1.0 for interpretability)
+weights:
+  gap: 0.70           # Optimality gap vs upper bound
+  runtime: 0.20       # Runtime penalty (normalized)
+  memory: 0.05        # Memory usage penalty
+  violation: 0.05     # Constraint violation penalty
+
+# Trust region configuration (controls step size / operator magnitude)
+trust_region:
+  min: 0.5            # Minimum trust region size
+  max: 2.0            # Maximum trust region size  
+  init: 1.0           # Initial trust region size
+  expand: 1.2         # Expansion factor on improvement
+  shrink: 0.8         # Shrink factor on stagnation
+
+# Stopping conditions
+stop:
+  target_gap_pct: 0.5  # Stop when gap ≤ this threshold (%)
+  patience: 3          # Early stop after this many stagnant iterations
+  max_iters: 30        # Maximum number of iterations
+
+# Target values for metrics (used for normalization and reporting)
+targets:
+  gap_pct: 1.0          # Target optimality gap (%)
+  runtime_ms: 1000.0    # Target runtime per evaluation (ms)
+  memory_mb: 100.0      # Target memory usage (MB)
+
+# Review/feedback configuration (for human-in-the-loop mode)
+review:
+  mode: "automatic"     # automatic | pairwise | rubric
+  # For pairwise: present A vs B comparisons
+  # For rubric: rate on multiple dimensions
+  rubric_dims: ["quality", "efficiency", "simplicity"]
+  accept_threshold: 0.85  # Normalized quality threshold
+
+# Additional metadata
+metadata:
+  problem_type: "knapsack"
+  version: "1.0"
+  description: "Standard configuration for 0/1 Knapsack optimization"
+
