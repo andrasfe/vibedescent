@@ -160,6 +160,22 @@ python examples/vrptw/run.py --customers 30 --capacity 40 --iters 14 --k 6
 
 The log directory `examples/vrptw/logs/vrptw/` stores per-iteration measurements so you can inspect which heuristic configuration won.
 
+Sample run (seed 3, 20 customers, capacity 35):
+
+| Iter | Operator | Routes | Objective | Notes |
+|------|----------|--------|-----------|-------|
+| 0 | — (initial) | 20 singleton routes | 1501.6 | Greedy seed |
+| 1 | `savings` | 10 routes | 1963.7 | Merges customers via savings |
+| 2 | `nearest_time_window` | 6 routes | 846.3 | Major improvement |
+| 3 | `two_phase` | 6 routes | 3604.1 | Hybrid tweak (worse) |
+| 4 | `savings` | 6 routes | 1963.7 | Recovery |
+| 5 | `savings` | 6 routes | 1963.7 | No change |
+| 6 | `two_phase` | 6 routes | 1938.5 | Minor adjustment |
+| 7 | `two_phase` | 6 routes | 2815.4 | Regression |
+| 8 | `nearest_time_window` | 6 routes | 846.3 | Best objective revisited |
+
+The best configuration in this run is the `nearest_time_window` strategy with 6 routes covering all customers and the lowest measured objective (distance + lateness penalties).
+
 ## Configuration (Objective File)
 
 ## Extending the Framework
